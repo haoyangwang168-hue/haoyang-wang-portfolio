@@ -276,7 +276,7 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>("zh");
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [isNavFloating, setIsNavFloating] = useState(false);
-  const [isHeroReady, setIsHeroReady] = useState(false);
+  const [isHeroMotionEnabled, setIsHeroMotionEnabled] = useState(false);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
   const copy = content[language];
 
@@ -287,8 +287,20 @@ export default function Home() {
   }, [language]);
 
   useEffect(() => {
-    const animationFrame = window.requestAnimationFrame(() => setIsHeroReady(true));
-    return () => window.cancelAnimationFrame(animationFrame);
+    const desktopPointer = window.matchMedia("(min-width: 821px) and (hover: hover) and (pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateHeroMotion = () => {
+      setIsHeroMotionEnabled(desktopPointer.matches && !reducedMotion.matches);
+    };
+
+    updateHeroMotion();
+    desktopPointer.addEventListener("change", updateHeroMotion);
+    reducedMotion.addEventListener("change", updateHeroMotion);
+
+    return () => {
+      desktopPointer.removeEventListener("change", updateHeroMotion);
+      reducedMotion.removeEventListener("change", updateHeroMotion);
+    };
   }, []);
 
   useEffect(() => {
@@ -348,7 +360,7 @@ export default function Home() {
       window.removeEventListener("pointerdown", resumeVideo);
       window.removeEventListener("touchstart", resumeVideo);
     };
-  }, []);
+  }, [isHeroMotionEnabled]);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -415,7 +427,10 @@ export default function Home() {
 
   return (
     <main className="site-shell" key={language}>
-      <header className={`hero reference-hero ${isHeroReady ? "is-opened" : "is-opening"}`} id="top">
+      <header
+        className={`hero reference-hero is-opened ${isHeroMotionEnabled ? "has-hero-motion" : "is-hero-static"}`}
+        id="top"
+      >
         <div className="hero-opening-mask" aria-hidden="true">
           <span>WANG HAOYANG</span>
           <strong>PERSONAL PAGE / 2026</strong>
@@ -456,49 +471,58 @@ export default function Home() {
 
         <div className="particle-hero-main frame">
           <section className="particle-hero-stage">
-            <video
-              ref={heroVideoRef}
-              className="particle-hero-video"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              aria-hidden="true"
-            >
-              <source src="/assets/hero-background.mp4?v=20260815-1" type="video/mp4" />
-            </video>
+            {isHeroMotionEnabled && (
+              <video
+                ref={heroVideoRef}
+                className="particle-hero-video"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
+              >
+                <source src="/assets/hero-background.mp4?v=20260815-1" type="video/mp4" />
+              </video>
+            )}
 
             <div className="particle-stage-top">
               <p className="hero-eyebrow">{copy.heroEyebrow}</p>
-              <span>{language === "zh" ? "移动鼠标 · 点击重组" : "Move pointer · Click to regroup"}</span>
+              <span>
+                {isHeroMotionEnabled
+                  ? (language === "zh" ? "移动鼠标 · 点击重组" : "Move pointer · Click to regroup")
+                  : (language === "zh" ? "轻量浏览 · 向下探索" : "Light view · Scroll to explore")}
+              </span>
             </div>
 
             <h1 className="particle-hero-accessible-title">{copy.heroTitle.join(" · ")}</h1>
-            <div className="particle-title-stack" aria-hidden="true">
-              <div className="particle-title-row">
-                <ParticleText
-                  text={copy.heroTitle.join(" · ")}
-                  particleSize={3.05}
-                  density={3.25}
-                  color="#ffffff"
-                  highlightColor="#c94b36"
-                  scatter={180}
-                  gatherDuration={1600}
-                  stagger={420}
-                  pointerRepel={52}
-                  repelRadius={150}
-                  idleDrift={0.45}
-                  trigger="click"
-                  fontSize="clamp(4.5rem, 14vw, 11rem)"
-                  fontWeight={900}
-                  fontFamily='"Microsoft YaHei", "Noto Sans SC", sans-serif'
-                  widthRatio={0.985}
-                  verticalScale={1.36}
-                  glow={false}
-                />
+            <h1 className="particle-hero-static-title">{copy.heroTitle.join(" · ")}</h1>
+            {isHeroMotionEnabled && (
+              <div className="particle-title-stack" aria-hidden="true">
+                <div className="particle-title-row">
+                  <ParticleText
+                    text={copy.heroTitle.join(" · ")}
+                    particleSize={3.05}
+                    density={3.25}
+                    color="#ffffff"
+                    highlightColor="#c94b36"
+                    scatter={180}
+                    gatherDuration={1600}
+                    stagger={420}
+                    pointerRepel={52}
+                    repelRadius={150}
+                    idleDrift={0.45}
+                    trigger="click"
+                    fontSize="clamp(4.5rem, 14vw, 11rem)"
+                    fontWeight={900}
+                    fontFamily='"Microsoft YaHei", "Noto Sans SC", sans-serif'
+                    widthRatio={0.985}
+                    verticalScale={1.36}
+                    glow={false}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </section>
 
           <aside className="particle-hero-aside">
