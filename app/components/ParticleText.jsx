@@ -93,6 +93,7 @@ const ParticleText = ({
     let isInViewport = true;
     let width = 0;
     let height = 0;
+    let textGuide = null;
 
     const pointer = { active: false, x: 0, y: 0, smoothX: 0, smoothY: 0 };
 
@@ -135,6 +136,16 @@ const ParticleText = ({
 
     const render = (now) => {
       ctx.clearRect(0, 0, width, height);
+
+      if (textGuide) {
+        ctx.save();
+        ctx.globalAlpha = 0.2;
+        ctx.shadowBlur = 7;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.72)";
+        ctx.drawImage(textGuide.canvas, textGuide.x, textGuide.y);
+        ctx.restore();
+      }
+
       if (glow && !reducedMotion) {
         ctx.shadowBlur = particleSize * 3;
         ctx.shadowColor = highlightColor;
@@ -142,8 +153,8 @@ const ParticleText = ({
         ctx.shadowBlur = 0;
       }
 
-      pointer.smoothX += (pointer.x - pointer.smoothX) * 0.18;
-      pointer.smoothY += (pointer.y - pointer.smoothY) * 0.18;
+      pointer.smoothX += (pointer.x - pointer.smoothX) * 0.62;
+      pointer.smoothY += (pointer.y - pointer.smoothY) * 0.62;
       let complete = true;
 
       particles.forEach((particle) => {
@@ -167,15 +178,16 @@ const ParticleText = ({
         if (pointer.active && !reducedMotion && pointerRepel > 0 && repelRadius > 0) {
           const dx = baseX - pointer.smoothX;
           const dy = baseY - pointer.smoothY;
-          const distance = Math.hypot(dx, dy);
-          if (distance > 0 && distance < repelRadius) {
+          const distanceSquared = dx * dx + dy * dy;
+          if (distanceSquared > 0 && distanceSquared < repelRadius * repelRadius) {
+            const distance = Math.sqrt(distanceSquared);
             const force = Math.pow(1 - distance / repelRadius, 2) * pointerRepel;
             baseX += (dx / distance) * force;
             baseY += (dy / distance) * force;
           }
         }
 
-        const follow = reducedMotion ? 1 : 0.22;
+        const follow = reducedMotion ? 1 : 0.42;
         particle.x += (baseX - particle.x) * follow;
         particle.y += (baseY - particle.y) * follow;
         ctx.globalAlpha = clamp(0.35 + progress * 0.65, 0, 1);
@@ -256,6 +268,12 @@ const ParticleText = ({
       offCtx.scale(1, resolvedVerticalScale);
       offCtx.fillText(content, padding - left, ascent);
       offCtx.restore();
+
+      textGuide = {
+        canvas: offscreen,
+        x: width / 2 - offscreen.width / 2,
+        y: height / 2 - offscreen.height / 2,
+      };
 
       const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
       const targets = [];
@@ -339,6 +357,10 @@ const ParticleText = ({
       const rect = canvas.getBoundingClientRect();
       pointer.x = event.clientX - rect.left;
       pointer.y = event.clientY - rect.top;
+      if (!pointer.active) {
+        pointer.smoothX = pointer.x;
+        pointer.smoothY = pointer.y;
+      }
       pointer.active = true;
     };
     const handlePointerLeave = () => { pointer.active = false; };

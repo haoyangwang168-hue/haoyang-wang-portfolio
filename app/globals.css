@@ -2601,6 +2601,15 @@ video {
   grid-template-rows: minmax(300px, 1fr);
 }
 
+.particle-title-stack::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 16% -3% 10%;
+  background: radial-gradient(ellipse at center, rgba(14, 12, 10, 0.22), transparent 72%);
+  pointer-events: none;
+}
+
 .particle-title-row {
   min-width: 0;
   min-height: 300px;

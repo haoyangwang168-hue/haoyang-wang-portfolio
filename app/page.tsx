@@ -22,7 +22,7 @@ const content = {
       ["个人优势", "strengths"],
     ],
     contactButton: "联系我",
-    heroEyebrow: "准大一新生 · 个人作品集",
+    heroEyebrow: "准大一新生 · 个人主页",
     name: "汪昊阳",
     heroTitle: ["准大一新生", "摄影爱好者", "生活探索者"],
     heroStatement: "在出发之前，先成为一个愿意不断尝试的人。",
@@ -95,7 +95,7 @@ const content = {
     phoneAction: "拨打电话",
     footerLocation: "现居广州 · 即将开启大学生活",
     backTop: "返回顶部",
-    copyright: "汪昊阳个人作品集 · 二〇二六",
+    copyright: "汪昊阳个人主页 · 二〇二六",
   },
   en: {
     languageLabel: "中文",
@@ -105,7 +105,7 @@ const content = {
       ["Strengths", "strengths"],
     ],
     contactButton: "Contact",
-    heroEyebrow: "Incoming University Student · Personal Portfolio",
+    heroEyebrow: "Incoming University Student · Personal Homepage",
     name: "Haoyang Wang",
     heroTitle: ["INCOMING", "UNIVERSITY STUDENT", "& VISUAL EXPLORER"],
     heroStatement: "Before setting out, I choose to become someone who keeps trying.",
@@ -178,7 +178,7 @@ const content = {
     phoneAction: "Call me",
     footerLocation: "Based in Guangzhou · University life ahead",
     backTop: "Back to top",
-    copyright: "Haoyang Wang Portfolio · 2026",
+    copyright: "Haoyang Wang Personal Homepage · 2026",
   },
 } as const;
 
@@ -418,7 +418,7 @@ export default function Home() {
       <header className={`hero reference-hero ${isHeroReady ? "is-opened" : "is-opening"}`} id="top">
         <div className="hero-opening-mask" aria-hidden="true">
           <span>WANG HAOYANG</span>
-          <strong>PORTFOLIO / 2026</strong>
+          <strong>PERSONAL PAGE / 2026</strong>
           <i />
         </div>
         <nav
@@ -427,7 +427,7 @@ export default function Home() {
         >
           <a className="wordmark" href="#top" aria-label={copy.backTop}>
             <strong>{copy.name}</strong>
-            <span>{language === "zh" ? "个人作品集" : "Portfolio"}</span>
+            <span>{language === "zh" ? "个人主页" : "Personal Page"}</span>
           </a>
 
           <div className="nav-links">
@@ -471,7 +471,7 @@ export default function Home() {
 
             <div className="particle-stage-top">
               <p className="hero-eyebrow">{copy.heroEyebrow}</p>
-              <span>{language === "zh" ? "移动鼠标 · 悬停文字" : "Move pointer · Hover type"}</span>
+              <span>{language === "zh" ? "移动鼠标 · 点击重组" : "Move pointer · Click to regroup"}</span>
             </div>
 
             <h1 className="particle-hero-accessible-title">{copy.heroTitle.join(" · ")}</h1>
@@ -479,17 +479,17 @@ export default function Home() {
               <div className="particle-title-row">
                 <ParticleText
                   text={copy.heroTitle.join(" · ")}
-                  particleSize={2.55}
+                  particleSize={3.05}
                   density={3.25}
                   color="#ffffff"
-                  highlightColor="#d7d7c0"
+                  highlightColor="#c94b36"
                   scatter={180}
                   gatherDuration={1600}
                   stagger={420}
-                  pointerRepel={40}
-                  repelRadius={120}
-                  idleDrift={0.7}
-                  trigger="hover"
+                  pointerRepel={52}
+                  repelRadius={150}
+                  idleDrift={0.45}
+                  trigger="click"
                   fontSize="clamp(4.5rem, 14vw, 11rem)"
                   fontWeight={900}
                   fontFamily='"Microsoft YaHei", "Noto Sans SC", sans-serif'

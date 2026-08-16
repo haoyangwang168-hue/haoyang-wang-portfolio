@@ -23,13 +23,13 @@ async function render() {
   );
 }
 
-test("server-renders the finished portfolio", async () => {
+test("server-renders the finished personal homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>汪昊阳 · 个人作品集<\/title>/);
+  assert.match(html, /<title>汪昊阳 · 个人主页<\/title>/);
   assert.match(html, /准大一新生 · 摄影爱好者 · 生活探索者/);
   assert.match(html, /hero-background\.mp4/);
   assert.match(html, /id="about"/);
